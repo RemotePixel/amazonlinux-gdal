@@ -138,4 +138,4 @@ RUN cd $APP_DIR \
 ENV GDAL_DATA $APP_DIR/local/lib/gdal
 ENV GDAL_CONFIG $APP_DIR/local/bin/gdal-config
 
-RUN pip3 install wheel numpy --no-binary numpy
+RUN pip3 install cython wheel numpy --no-binary numpy
