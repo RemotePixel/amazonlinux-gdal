@@ -74,12 +74,10 @@ RUN cd $APP_DIR \
   && make install && make clean \
   && rm -rf $APP_DIR/openjpeg-$OPENJPEG_VERSION $APP_DIR/v$OPENJPEG_VERSION.tar.gz
 
-RUN ln -s $APP_DIR/local/include/openjpeg-2.2 $APP_DIR/local/include/openjpeg-2.1
-
 ENV LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
 
 # Build and install GDAL (minimal support geotiff and jp2 support, https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
-ENV GDAL_VERSION 2.2.0
+ENV GDAL_VERSION 2.2.2
 RUN cd $APP_DIR \
   && wget http://download.osgeo.org/gdal/$GDAL_VERSION/gdal${GDAL_VERSION//.}.zip \
   && unzip gdal${GDAL_VERSION//.}.zip \
