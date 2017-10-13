@@ -9,7 +9,7 @@ Create amazonlinux docker image with python 3.6 and GDAL 2.2.2
   - Proj4 (*4.9.3*)
   - GEOS (*3.5.0*)
   - GeoTIFF
-  - Jpeg2000 (OpenJPEG *2.2.0*)
+  - Jpeg2000 (OpenJPEG *2.3.0*) [see Even Rouault announcement](https://erouault.blogspot.ca/2017/10/optimizing-jpeg2000-decoding.html)
 
 ### Environment
 

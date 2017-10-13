@@ -63,7 +63,7 @@ RUN cd $APP_DIR \
   && make install && make clean \
   && rm -rf $APP_DIR/geos-$GEOS_VERSION $APP_DIR/$GEOS_VERSION.tar.gz
 
-ENV OPENJPEG_VERSION 2.2.0
+ENV OPENJPEG_VERSION 2.3.0
 RUN cd $APP_DIR \
   && wget https://github.com/uclouvain/openjpeg/archive/v$OPENJPEG_VERSION.tar.gz \
   && tar -zvxf v$OPENJPEG_VERSION.tar.gz \
@@ -77,11 +77,15 @@ RUN cd $APP_DIR \
 ENV LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
 
 # Build and install GDAL (minimal support geotiff and jp2 support, https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
+# applying patch from Sean Gillies https://github.com/sgillies/frs-wheel-builds/blob/fafaeadfb638f44d8384e3742c829d2d68297915/patches/changeset_40330.diff
+#   to enable openjpeg 2.3.0 support
 ENV GDAL_VERSION 2.2.2
 RUN cd $APP_DIR \
   && wget http://download.osgeo.org/gdal/$GDAL_VERSION/gdal${GDAL_VERSION//.}.zip \
   && unzip gdal${GDAL_VERSION//.}.zip \
   && cd $APP_DIR/gdal-$GDAL_VERSION \
+  && wget https://github.com/sgillies/frs-wheel-builds/raw/fafaeadfb638f44d8384e3742c829d2d68297915/patches/changeset_40330.diff \
+  && patch -u --verbose -p4 < ./changeset_40330.diff \
   && ./configure \
       --prefix=$APP_DIR/local \
       --with-static-proj4=$APP_DIR/local \
