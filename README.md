@@ -7,7 +7,7 @@ Create amazonlinux docker image with python 3.6 and GDAL 2.2.2
 - Python **3.6.1**
 - Lightweight GDAL **2.2.2** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
   - Proj4 (*4.9.3*)
-  - GEOS (*3.5.0*)
+  - GEOS (*3.6.2*)
   - GeoTIFF
   - Jpeg2000 (OpenJPEG *2.3.0*) [see Even Rouault announcement](https://erouault.blogspot.ca/2017/10/optimizing-jpeg2000-decoding.html)
 
