@@ -39,3 +39,7 @@ RUN cd /tmp && zip -r9q /tmp/package.zip vendored/*
 RUN cd $APP_DIR/local && zip -r9q --symlinks /tmp/package.zip lib/*.so*
 RUN cd $APP_DIR/local && zip -r9q /tmp/package.zip share
 ```
+
+To makes everything works fine you need to set those env variable in AWS Lambda 
+- `GDAL_DATA=/var/task/share/gdal/`
+- `PROJ_LIB=/var/task/share/proj/`
