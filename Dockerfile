@@ -129,5 +129,5 @@ RUN cd $APP_DIR \
     && make && make install \
     && rm -rf $APP_DIR/gdal${GDAL_VERSION//.}.zip $APP_DIR/gdal-$GDAL_VERSION
 
-ENV GDAL_DATA $APP_DIR/local/lib/gdal
+ENV GDAL_DATA $APP_DIR/local/share/gdal
 ENV GDAL_CONFIG $APP_DIR/local/bin/gdal-config
