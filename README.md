@@ -33,16 +33,21 @@ HOME_URL="http://aws.amazon.com/amazon-linux-ami/"
 ```bash
 APP_DIR=/tmp/app #Custom variable to point to the custom GDAL installation
 
+PATH=$APP_DIR/local/bin:$PATH
 LD_LIBRARY_PATH=$APP_DIR/local:/usr/local/lib:$LD_LIBRARY_PATH
 LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
-GDAL_DATA=$APP_DIR/local/lib/gdal
+PKG_CONFIG_PATH=$APP_DIR/local/lib/pkgconfig/
+
+GDAL_DATA=$APP_DIR/local/share/gdal
+PROJ_LIB=$APP_DIR/local/share/proj
 GDAL_CONFIG=$APP_DIR/local/bin/gdal-config
+GEOS_CONFIG=$APP_DIR/local/bin/geos-config
 ```
 
 ### Use (create a lambda package)
 
 ```Dockerfile
-FROM remotepixel/amazonlinux-gdal:latest
+FROM remotepixel/amazonlinux-gdal:2.3.0
 
 RUN pip3 install rasterio --no-binary rasterio -t /tmp/vendored
 
