@@ -1,12 +1,29 @@
 FROM amazonlinux:latest
 
-################################################################################
-#                             INSTALL PYTHON 3.6                               #
-################################################################################
+RUN yum update -y && yum upgrade -y
 
-# Install apt dependencies for python3.6
-RUN yum install -y gcc gcc-c++ freetype-devel yum-utils findutils openssl-devel
-RUN yum -y groupinstall development
+# Install apt dependencies
+RUN yum install gcc gcc-c++ freetype-devel yum-utils findutils openssl-devel -y
+RUN yum groupinstall development -y
+RUN yum install libjpeg-devel libpng-devel libcurl-devel -y
+RUN yum install zlib-devel sqlite-devel.x86_64 liblzma-dev wget zip unzip tar gzip libtool cmake -y
+
+RUN yum install libmpc-devel mpfr-devel gmp-devel -y
+
+ENV APP_DIR /tmp/app
+RUN mkdir $APP_DIR
+
+ENV GCC_VERSION=5.5.0
+RUN cd $APP_DIR \
+  && curl -o "gcc-${GCC_VERSION}.tar.gz" https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
+  && tar xvzf "gcc-${GCC_VERSION}.tar.gz" \
+  && cd gcc-${GCC_VERSION} \
+  && ./configure --with-system-zlib --disable-multilib --enable-languages=c,c++ \
+  && make -j 8 && make install \
+  && make clean \
+  && rm -rf $APP_DIR/gcc-${GCC_VERSION} $APP_DIR/gcc-${GCC_VERSION}.tar.gz
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 RUN curl https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz | tar -xJ \
     && cd Python-3.6.1 \
@@ -16,21 +33,9 @@ RUN curl https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz | tar -xJ \
     && cd .. \
     && rm -rf Python-3.6.1
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-
-# Install python module needed for gdal and rasterio
+# Some python modules needs numpy (sources) and cython
+RUN pip3 install pip -U
 RUN pip3 install cython numpy --no-binary numpy
-
-################################################################################
-#                                INSTALL GDAL                                  #
-################################################################################
-
-# Install apt dependencies fro GDAL and drivers
-RUN yum install -y libjpeg-devel zlib-devel libpng-devel libcurl-devel \
-                   sqlite-devel.x86_64 wget zip  unzip tar gzip libtool cmake
-
-ENV APP_DIR /tmp/app
-RUN mkdir $APP_DIR
 
 ENV PROJ_VERSION 4.9.3
 RUN cd $APP_DIR \
@@ -49,7 +54,7 @@ RUN cd $APP_DIR \
   && cd geos-$GEOS_VERSION \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$APP_DIR/local \
   && make && make install && make clean \
-  && rm -rf $APP_DIR/geos-$GEOS_VERSION $APP_DIR/$GEOS_VERSION.tar.gz
+  && rm -rf $APP_DIR/geos-$GEOS_VERSION $APP_DIR/geos-$GEOS_VERSION.tar.bz2
 
 ENV OPENJPEG_VERSION 2.3.0
 RUN cd $APP_DIR \
@@ -62,23 +67,45 @@ RUN cd $APP_DIR \
   && make install && make clean \
   && rm -rf $APP_DIR/openjpeg-$OPENJPEG_VERSION $APP_DIR/v$OPENJPEG_VERSION.tar.gz
 
-ENV LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
+ENV WEBP_VERSION 0.6.1
+RUN cd $APP_DIR\
+    && curl -f -L -O https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz \
+    && tar xzf libwebp-${WEBP_VERSION}.tar.gz \
+    && cd libwebp-${WEBP_VERSION} \
+    && CFLAGS="-O2 -Wl,-S" ./configure --prefix=$APP_DIR/local/ \
+    && make \
+    && make install \
+    && make clean \
+    && rm -rf $APP_DIR/libwebp-${WEBP_VERSION}  $APP_DIR/libwebp-${WEBP_VERSION}.tar.gz
 
-# Build and install GDAL (minimal support geotiff and jp2 support, https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
-# applying patch from Sean Gillies https://github.com/sgillies/frs-wheel-builds/blob/fafaeadfb638f44d8384e3742c829d2d68297915/patches/changeset_40330.diff
-#   to enable openjpeg 2.3.0 support
-ENV GDAL_VERSION 2.2.2
+ENV ZSTD_VERSION 1.3.4
 RUN cd $APP_DIR \
-  && wget http://download.osgeo.org/gdal/$GDAL_VERSION/gdal${GDAL_VERSION//.}.zip \
-  && unzip gdal${GDAL_VERSION//.}.zip \
-  && cd $APP_DIR/gdal-$GDAL_VERSION \
-  && wget https://github.com/sgillies/frs-wheel-builds/raw/fafaeadfb638f44d8384e3742c829d2d68297915/patches/changeset_40330.diff \
-  && patch -u --verbose -p4 < ./changeset_40330.diff \
+  && wget https://github.com/facebook/zstd/archive/v${ZSTD_VERSION}.tar.gz \
+  && tar -zvxf v${ZSTD_VERSION}.tar.gz \
+  && cd zstd-${ZSTD_VERSION} \
+  && make PREFIX=$APP_DIR/local/ ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
+  && make install PREFIX=$APP_DIR/local/ ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
+  && make clean \
+  && rm -rf $APP_DIR/v${ZSTD_VERSION}.tar.gz $APP_DIR/zstd-${ZSTD_VERSION}
+
+
+ENV GDAL_VERSION 2.3.0
+RUN cd $APP_DIR \
+  && wget https://github.com/OSGeo/gdal/archive/v${GDAL_VERSION}.zip \
+  && unzip v${GDAL_VERSION}.zip
+
+ENV PATH=$APP_DIR/local/bin:$PATH
+ENV LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
+ENV PKG_CONFIG_PATH=$APP_DIR/local/lib/pkgconfig/
+
+RUN cd $APP_DIR/gdal-$GDAL_VERSION/gdal \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$APP_DIR/local \
-      --with-static-proj4=$APP_DIR/local \
+      --with-proj=$APP_DIR/local \
       --with-geos=$APP_DIR/local/bin/geos-config \
-      --with-openjpeg=$APP_DIR/local \
+      --with-openjpeg \
+      --with-webp=$APP_DIR/local \
+      --with-zstd=$APP_DIR/local \
       --with-threads \
       --disable-debug \
       --with-jpeg \
@@ -123,11 +150,15 @@ RUN cd $APP_DIR \
       --without-qhull \
       --without-sde \
       --without-sqlite3 \
-      --without-webp \
       --without-xerces \
       --without-xml2 \
     && make && make install \
-    && rm -rf $APP_DIR/gdal${GDAL_VERSION//.}.zip $APP_DIR/gdal-$GDAL_VERSION
+    && rm -rf $APP_DIR/v${GDAL_VERSION}.zip
+
+RUN cd $APP_DIR/gdal-$GDAL_VERSION/gdal \
+  && g++ -std=c++11 -Wall -fPIC port/vsipreload.cpp -shared -o $APP_DIR/vsipreload.so -Iport -L. -L.libs -lgdal
 
 ENV GDAL_DATA $APP_DIR/local/share/gdal
+ENV PROJ_LIB $APP_DIR/local/share/proj
 ENV GDAL_CONFIG $APP_DIR/local/bin/gdal-config
+ENV GEOS_CONFIG $APP_DIR/local/bin/geos-config
