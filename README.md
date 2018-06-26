@@ -1,14 +1,28 @@
 # amazonlinux-gdal
 
-Create amazonlinux docker image with python 3.6 and GDAL 2.2.2
+Create amazonlinux docker image with python 3.6 and GDAL 2.3.0
 
 ### Version
 
-- Python **3.6.1**
-- Lightweight GDAL **2.2.2** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
+- OS: **Amazon Linux AMI**
+```
+VERSION="2018.03"
+ID="amzn"
+ID_LIKE="rhel fedora"
+VERSION_ID="2018.03"
+PRETTY_NAME="Amazon Linux AMI 2018.03"
+ANSI_COLOR="0;33"
+CPE_NAME="cpe:/o:amazon:linux:2018.03:ga"
+HOME_URL="http://aws.amazon.com/amazon-linux-ami/"
+```
+
+- Python **3.6.1** | pip **10.0.1**
+- Lightweight GDAL **2.3.0** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
   - Proj4 (*4.9.3*)
   - GEOS (*3.6.2*)
   - GeoTIFF
+  - ZSTD (*1.3.4*)
+  - WEBP (*0.6.1*)
   - Jpeg2000 (OpenJPEG *2.3.0*) [see Even Rouault announcement](https://erouault.blogspot.ca/2017/10/optimizing-jpeg2000-decoding.html)
 
 ### Environment
@@ -40,6 +54,6 @@ RUN cd $APP_DIR/local && zip -r9q --symlinks /tmp/package.zip lib/*.so*
 RUN cd $APP_DIR/local && zip -r9q /tmp/package.zip share
 ```
 
-To makes everything works fine you need to set those env variable in AWS Lambda 
+To makes everything works fine you need to set those env variable in AWS Lambda
 - `GDAL_DATA=/var/task/share/gdal/`
 - `PROJ_LIB=/var/task/share/proj/`
