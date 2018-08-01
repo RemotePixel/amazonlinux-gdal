@@ -1,6 +1,6 @@
 # amazonlinux-gdal
 
-Create amazonlinux docker image with python 3.6 and GDAL 2.3.1
+Create amazonlinux docker image with python 3.6 and GDAL 2.3.0
 
 Note:
 - another version with gdal2.2.2 is also available: https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.2.2
@@ -26,7 +26,7 @@ Amazon Linux AMI release 2018.03
 
 
 - Python **3.6.5** | pip **18.0**
-- Lightweight GDAL **2.3.1** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
+- Lightweight GDAL **2.3.0** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
   - Proj4 (*5.1.0*)
   - GEOS (*3.6.2*)
   - GeoTIFF
