@@ -4,7 +4,7 @@ SHELL = /bin/bash
 all: build push
 
 build:
-	docker build -f Dockerfile --tag amazonlinux-gdal:2.3.0 .
+	docker build -f Dockerfile --tag amazonlinux-gdal:2.3.1 .
 
 shell:
 	docker run \
@@ -12,11 +12,11 @@ shell:
 		--volume $(shell pwd)/:/data \
 		--rm \
 		-it \
-		amazonlinux-gdal:2.3.0 /bin/bash
+		amazonlinux-gdal:2.3.1 /bin/bash
 
 push:
-	docker tag amazonlinux-gdal:2.3.0 remotepixel/amazonlinux-gdal:2.3.0
-	docker push remotepixel/amazonlinux-gdal:2.3.0
+	docker tag amazonlinux-gdal:2.3.1 remotepixel/amazonlinux-gdal:2.3.1
+	docker push remotepixel/amazonlinux-gdal:2.3.1
 
 
 clean:
