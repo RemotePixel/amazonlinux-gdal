@@ -4,7 +4,7 @@ Create amazonlinux docker image with python 3.6 and GDAL 2.3.1
 
 Note:
 - another version with gdal2.2.2 is also available: https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.2.2
-- update to gdal 2.3.1 is inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda)
+- inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda)
 
 ### Version
 
