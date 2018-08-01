@@ -1,64 +1,62 @@
-FROM amazonlinux:latest
+FROM lambdalinux/baseimage-amzn:2017.03-004
 
 RUN yum update -y && yum upgrade -y
+RUN yum install -y python36-devel python36-pip
+RUN yum clean all
 
-# Install apt dependencies
-RUN yum install gcc gcc-c++ freetype-devel yum-utils findutils openssl-devel -y
-RUN yum groupinstall development -y
-RUN yum install libjpeg-devel libpng-devel libcurl-devel -y
-RUN yum install zlib-devel sqlite-devel.x86_64 liblzma-dev wget zip unzip tar gzip libtool cmake -y
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
-RUN yum install libmpc-devel mpfr-devel gmp-devel -y
+# install system libraries
+RUN yum makecache fast
+RUN yum install -y gcc gcc-c++ cmake automake glib2-devel
+RUN yum install -y wget tar unzip zip bzip2 gzip findutils yum-utils openssl-devel
+RUN yum install -y zlib-devel curl-devel libcurl-devel libjpeg-devel libpng-devel liblzma-dev libmpc-devel mpfr-devel gmp-devel
+RUN yum clean all
 
 ENV APP_DIR /tmp/app
 RUN mkdir $APP_DIR
 
-ENV GCC_VERSION=5.5.0
+# versions of packages
+ENV \
+  PKGCONFIG_VERSION=0.29.2 \
+  PROJ_VERSION=5.1.0 \
+  GEOS_VERSION=3.6.2 \
+  OPENJPEG_VERSION=2.3.0 \
+  WEBP_VERSION=0.6.1 \
+  ZSTD_VERSION=1.3.4 \
+  GDAL_VERSION=2.3.0
+
+# pkg-config
 RUN cd $APP_DIR \
-  && curl -o "gcc-${GCC_VERSION}.tar.gz" https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
-  && tar xvzf "gcc-${GCC_VERSION}.tar.gz" \
-  && cd gcc-${GCC_VERSION} \
-  && ./configure --with-system-zlib --disable-multilib --enable-languages=c,c++ \
-  && make -j 8 && make install \
-  && make clean \
-  && rm -rf $APP_DIR/gcc-${GCC_VERSION} $APP_DIR/gcc-${GCC_VERSION}.tar.gz
-
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-
-RUN curl https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz | tar -xJ \
-    && cd Python-3.6.1 \
-    && ./configure --prefix=/usr/local --enable-shared \
-    && make \
-    && make install \
-    && cd .. \
-    && rm -rf Python-3.6.1
-
-# Some python modules needs numpy (sources) and cython
-RUN pip3 install pip -U
-RUN pip3 install cython numpy --no-binary numpy
-
-ENV PROJ_VERSION 4.9.3
-RUN cd $APP_DIR \
-   && wget -q https://github.com/OSGeo/proj.4/archive/$PROJ_VERSION.zip \
-   && unzip $PROJ_VERSION.zip \
-   && cd proj.4-$PROJ_VERSION \
-   && sh autogen.sh \
+   && wget -q https://pkg-config.freedesktop.org/releases/pkg-config-$PKGCONFIG_VERSION.tar.gz \
+   && tar xvf pkg-config-$PKGCONFIG_VERSION.tar.gz \
+   && cd pkg-config-$PKGCONFIG_VERSION \
    && ./configure CFLAGS="-O2 -Wl,-S" --prefix=$APP_DIR/local \
    && make && make install && make clean \
-   && rm -rf $APP_DIR/$PROJ_VERSION.zip $APP_DIR/proj.4-$PROJ_VERSION
+   && rm -rf $APP_DIR/pkg-config-$PKGCONFIG_VERSION.tar.gz $APP_DIR/pkg-config-$PKGCONFIG_VERSION
 
-ENV GEOS_VERSION 3.6.2
+# PROJ
 RUN cd $APP_DIR \
-  && wget http://download.osgeo.org/geos/geos-$GEOS_VERSION.tar.bz2 \
+   && wget -q http://download.osgeo.org/proj/proj-$PROJ_VERSION.tar.gz \
+   && tar -zvxf proj-$PROJ_VERSION.tar.gz \
+   && cd proj-$PROJ_VERSION \
+   && ./configure CFLAGS="-O2 -Wl,-S" --prefix=$APP_DIR/local \
+   && make && make install && make clean \
+   && rm -rf $APP_DIR/proj-$PROJ_VERSION.tar.gz $APP_DIR/proj-$PROJ_VERSION
+
+# GEOS
+RUN cd $APP_DIR \
+  && wget -q http://download.osgeo.org/geos/geos-$GEOS_VERSION.tar.bz2 \
   && tar jxf geos-$GEOS_VERSION.tar.bz2 \
   && cd geos-$GEOS_VERSION \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$APP_DIR/local \
   && make && make install && make clean \
   && rm -rf $APP_DIR/geos-$GEOS_VERSION $APP_DIR/geos-$GEOS_VERSION.tar.bz2
 
-ENV OPENJPEG_VERSION 2.3.0
+# OPENJPEG
 RUN cd $APP_DIR \
-  && wget https://github.com/uclouvain/openjpeg/archive/v$OPENJPEG_VERSION.tar.gz \
+  && wget -q https://github.com/uclouvain/openjpeg/archive/v$OPENJPEG_VERSION.tar.gz \
   && tar -zvxf v$OPENJPEG_VERSION.tar.gz \
   && cd openjpeg-$OPENJPEG_VERSION/ \
   && mkdir build \
@@ -67,20 +65,18 @@ RUN cd $APP_DIR \
   && make install && make clean \
   && rm -rf $APP_DIR/openjpeg-$OPENJPEG_VERSION $APP_DIR/v$OPENJPEG_VERSION.tar.gz
 
-ENV WEBP_VERSION 0.6.1
+# WEBP
 RUN cd $APP_DIR\
-    && curl -f -L -O https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz \
+    && wget -q https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz \
     && tar xzf libwebp-${WEBP_VERSION}.tar.gz \
     && cd libwebp-${WEBP_VERSION} \
     && CFLAGS="-O2 -Wl,-S" ./configure --prefix=$APP_DIR/local/ \
-    && make \
-    && make install \
-    && make clean \
-    && rm -rf $APP_DIR/libwebp-${WEBP_VERSION}  $APP_DIR/libwebp-${WEBP_VERSION}.tar.gz
+    && make && make install && make clean \
+    && rm -rf $APP_DIR/libwebp-${WEBP_VERSION} $APP_DIR/libwebp-${WEBP_VERSION}.tar.gz
 
-ENV ZSTD_VERSION 1.3.4
+# ZSTD
 RUN cd $APP_DIR \
-  && wget https://github.com/facebook/zstd/archive/v${ZSTD_VERSION}.tar.gz \
+  && wget -q https://github.com/facebook/zstd/archive/v${ZSTD_VERSION}.tar.gz \
   && tar -zvxf v${ZSTD_VERSION}.tar.gz \
   && cd zstd-${ZSTD_VERSION} \
   && make PREFIX=$APP_DIR/local/ ZSTD_LEGACY_SUPPORT=0 CFLAGS=-O1 \
@@ -88,17 +84,14 @@ RUN cd $APP_DIR \
   && make clean \
   && rm -rf $APP_DIR/v${ZSTD_VERSION}.tar.gz $APP_DIR/zstd-${ZSTD_VERSION}
 
-
-ENV GDAL_VERSION 2.3.0
-RUN cd $APP_DIR \
-  && wget https://github.com/OSGeo/gdal/archive/v${GDAL_VERSION}.zip \
-  && unzip v${GDAL_VERSION}.zip
-
-ENV PATH=$APP_DIR/local/bin:$PATH
 ENV LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
 ENV PKG_CONFIG_PATH=$APP_DIR/local/lib/pkgconfig/
 
-RUN cd $APP_DIR/gdal-$GDAL_VERSION/gdal \
+# GDAL
+RUN cd $APP_DIR \
+  && wget -q http://download.osgeo.org/gdal/$GDAL_VERSION/gdal-$GDAL_VERSION.tar.gz \
+  && tar -xzvf gdal-$GDAL_VERSION.tar.gz \
+  && cd gdal-$GDAL_VERSION \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$APP_DIR/local \
       --with-proj=$APP_DIR/local \
@@ -152,13 +145,13 @@ RUN cd $APP_DIR/gdal-$GDAL_VERSION/gdal \
       --without-sqlite3 \
       --without-xerces \
       --without-xml2 \
-    && make && make install \
-    && rm -rf $APP_DIR/v${GDAL_VERSION}.zip
+    && make && make install && make clean \
+    && rm -rf $APP_DIR/gdal-$GDAL_VERSION.tar.gz $APP_DIR/gdal-$GDAL_VERSION
 
-RUN cd $APP_DIR/gdal-$GDAL_VERSION/gdal \
-  && g++ -std=c++11 -Wall -fPIC port/vsipreload.cpp -shared -o $APP_DIR/vsipreload.so -Iport -L. -L.libs -lgdal
+ENV GDAL_DATA=$APP_DIR/local/share/gdal
+ENV PROJ_LIB=$APP_DIR/local/share/proj
+ENV GDAL_CONFIG=$APP_DIR/local/bin/gdal-config
+ENV GEOS_CONFIG=$APP_DIR/local/bin/geos-config
 
-ENV GDAL_DATA $APP_DIR/local/share/gdal
-ENV PROJ_LIB $APP_DIR/local/share/proj
-ENV GDAL_CONFIG $APP_DIR/local/bin/gdal-config
-ENV GEOS_CONFIG $APP_DIR/local/bin/geos-config
+RUN pip-3.6 install pip -U
+RUN pip3 install cython numpy --no-binary numpy

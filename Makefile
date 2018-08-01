@@ -8,7 +8,7 @@ build:
 
 shell:
 	docker run \
-		--name amazonlinux-gdal  \
+		--name amazonlinux \
 		--volume $(shell pwd)/:/data \
 		--rm \
 		-it \
@@ -20,5 +20,5 @@ push:
 
 
 clean:
-	docker stop amazonlinux-gdal
-	docker rm amazonlinux-gdal
+	docker stop amazonlinux
+	docker rm amazonlinux
