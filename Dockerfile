@@ -160,4 +160,6 @@ ENV \
   GDAL_CONFIG=$APP_DIR/local/bin/gdal-config \
   GEOS_CONFIG=$APP_DIR/local/bin/geos-config
 
+ENV PATH=$APP_DIR/local/bin:$PATH
+
 RUN pip-3.6 install pip -U && pip3 install cython numpy --no-binary numpy

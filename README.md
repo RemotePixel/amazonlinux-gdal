@@ -1,11 +1,14 @@
 # amazonlinux-gdal
 
-Create amazonlinux docker image with python 3.6 and GDAL 2.3.1
+Create amazonlinux docker image with python 3.6 and GDAL (see :point_down: from version)
 
-Note:
-- another version with gdal2.2.2 is also available: https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.2.2
-- another version with gdal2.3.0 is also available: https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.0
-- inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda)
+Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda)
+
+### GDAL Versions
+- **master** (HEAD - Nov 2018) https://github.com/RemotePixel/amazonlinux-gdal/tree/gdalmaster
+- **2.3.1** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.1
+- **2.3.0** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.0
+- **2.2.2** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.2.2
 
 ### Version
 
@@ -32,7 +35,7 @@ Amazon Linux AMI release 2018.03
   - GEOS (*3.6.2*)
   - GeoTIFF
   - ZSTD (*1.3.4*)
-  - WEBP (*0.6.1*)
+  - WEBP (*1.0.0*)
   - JPEG2000 (OpenJPEG *2.3.0*) [see Even Rouault announcement](https://erouault.blogspot.ca/2017/10/optimizing-jpeg2000-decoding.html)
 
 ### Environment
