@@ -1,23 +1,25 @@
 
 SHELL = /bin/bash
+TAG = master
 
 all: build push
 
 build:
-	docker build -f Dockerfile --tag amazonlinux-gdal:2.3.1 .
+	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
 
 shell:
+	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
 	docker run \
 		--name amazonlinux \
 		--volume $(shell pwd)/:/data \
 		--rm \
 		-it \
-		amazonlinux-gdal:2.3.1 /bin/bash
+		amazonlinux-gdal:${TAG} /bin/bash
 
 push:
-	docker tag amazonlinux-gdal:2.3.1 remotepixel/amazonlinux-gdal:2.3.1
-	docker push remotepixel/amazonlinux-gdal:2.3.1
-
+	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
+	docker tag amazonlinux-gdal:${TAG} remotepixel/amazonlinux-gdal:${TAG}
+	docker push remotepixel/amazonlinux-gdal:${TAG}
 
 clean:
 	docker stop amazonlinux
