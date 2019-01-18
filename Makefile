@@ -1,6 +1,6 @@
 
 SHELL = /bin/bash
-TAG = master
+TAG = 2.4.0
 
 all: build push
 
