@@ -7,9 +7,6 @@ Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geo
 ### GDAL Versions
 - **master** ([9598f77e1](https://github.com/OSGeo/gdal/commit/9598f77e1928c0cc946f07abdd1078ce5949e5d5) - 18 Jan 2019) https://github.com/RemotePixel/amazonlinux-gdal/tree/gdalmaster
 - **2.4.0** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0
-- **2.3.1** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.1
-- **2.3.0** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.0
-- **2.2.2** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.2.2
 
 ### Version
 
