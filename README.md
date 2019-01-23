@@ -2,63 +2,43 @@
 
 Create amazonlinux docker image with python 3.6 and GDAL (see :point_down: from version)
 
-Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda)
+Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda) amnd [mojodna/lambda-layer-rasterio](https://github.com/mojodna/lambda-layer-rasterio)
 
 ### GDAL Versions
-- **master** ([9598f77e1](https://github.com/OSGeo/gdal/commit/9598f77e1928c0cc946f07abdd1078ce5949e5d5) - 18 Jan 2019) https://github.com/RemotePixel/amazonlinux-gdal/tree/gdalmaster
-- **2.4.0** : https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0
-
-### Version
-
-- OS: **Amazon Linux AMI**
-```
-$ cat /etc/*-release
-NAME="Amazon Linux AMI"
-VERSION="2018.03"
-ID="amzn"
-ID_LIKE="rhel fedora"
-VERSION_ID="2018.03"
-PRETTY_NAME="Amazon Linux AMI 2018.03"
-ANSI_COLOR="0;33"
-CPE_NAME="cpe:/o:amazon:linux:2018.03:ga"
-HOME_URL="http://aws.amazon.com/amazon-linux-ami/"
-Amazon Linux AMI release 2018.03
-```
+- **2.4.0** : https://github.com/OSGeo/gdal/releases/tag/v2.4.0
 
 - Python **3.6.5** | pip **18.0**
-- Lightweight GDAL **2.4.0** with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
+- Lightweight GDAL with minimal support [more info](https://trac.osgeo.org/gdal/wiki/BuildingOnUnixWithMinimizedDrivers#no1)
   - Proj4 (*5.2.0*)
-  - GEOS (*3.6.2*)
+  - GEOS (*3.7.1*)
   - GeoTIFF
   - ZSTD (*1.3.8*)
   - WEBP (*1.0.1*)
-  - :warning: HTTP2 (*1.35.1*)
+  - ngHTTP2 (*1.35.1*)
   - curl (*7.59.0*)
   - JPEGTURBO (*2.0.1*)
   - JPEG2000 (OpenJPEG *2.3.0*) [see Even Rouault announcement](https://erouault.blogspot.ca/2017/10/optimizing-jpeg2000-decoding.html)
 
 ### Environment
 
-- GDAL installation inside `/tmp/app/local`
+- GDAL installation inside `/opt`
 
 ```bash
-APP_DIR=/tmp/app #Custom variable to point to the custom GDAL installation
+PREFIX=/opt #Custom variable to point to the custom GDAL installation
 
-PATH=$APP_DIR/local/bin:$PATH
-LD_LIBRARY_PATH=$APP_DIR/local:/usr/local/lib:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=$APP_DIR/local/lib:$LD_LIBRARY_PATH
-PKG_CONFIG_PATH=$APP_DIR/local/lib/pkgconfig/
+PATH=$PREFIX/bin:$PATH
+PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
-GDAL_DATA=$APP_DIR/local/share/gdal
-PROJ_LIB=$APP_DIR/local/share/proj
-GDAL_CONFIG=$APP_DIR/local/bin/gdal-config
-GEOS_CONFIG=$APP_DIR/local/bin/geos-config
+GDAL_DATA=$PREFIX/share/gdal
+PROJ_LIB=$PREFIX/share/proj
+GDAL_CONFIG=$PREFIX/bin/gdal-config
+GEOS_CONFIG=$PREFIX/bin/geos-config
 ```
 
 ### Use (create a lambda package)
 
 ```Dockerfile
-FROM remotepixel/amazonlinux-gdal:2.3.0
+FROM remotepixel/amazonlinux-gdal:2.4.0
 
 RUN pip3 install rasterio --no-binary rasterio -t /tmp/vendored
 
