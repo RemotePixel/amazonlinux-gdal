@@ -179,7 +179,7 @@ RUN cd $APP_DIR \
       --without-xerces \
       --without-xml2 \
     && make -j $(nproc) --silent && make install && make clean \
-    && rm -rf $APP_DIR/$GDAL_VERSION.zip $APP_DIR/gdal-$GDAL_VERSION
+    && rm -rf $APP_DIR/v$GDAL_VERSION.zip $APP_DIR/gdal-$GDAL_VERSION
 
 RUN yum clean all
 
