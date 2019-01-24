@@ -48,6 +48,17 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 FROM remotepixel/amazonlinux-gdal:{TAG}
 ```
 
+### Docker environment variables
+A couple environment variables are set when creating the images:
+
+- **PREFIX**: Path where GDAL has been installed, shoud be `/var/task`
+- **GDAL_DATA**: `$PREFIX/share/gdal`
+- **PROJ_LIB**: `$PREFIX/share/proj`
+- **GDAL_CONFIG**: `$PREFIX/bin/gdal-config`
+- **GEOS_CONFIG**: `$PREFIX/bin/geos-config`
+- **GDAL_VERSION**: version of GDAL
+- **PATH** has been updated to add `$PREFIX/bin` in order to access gdal binaries
+
 ## Create a Lambda package
 ```bash
 docker run --name lambda -itd remotepixel/amazonlinux-gdal:2.4.0 /bin/bash
