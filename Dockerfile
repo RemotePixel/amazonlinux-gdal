@@ -15,28 +15,9 @@ ENV \
   PROJ_VERSION=5.2.0 \
   GEOS_VERSION=3.7.1 \
   OPENJPEG_VERSION=2.3.0 \
-  LIBJPEG_TURBO_VERSION=2.0.1 \
   WEBP_VERSION=1.0.1 \
   ZSTD_VERSION=1.3.8 \
-  CURL_VERSION=7.59.0 \
-  NGHTTP2_VERSION=1.35.1 \
   GDAL_VERSION=master
-
-# nghttp2
-RUN mkdir /tmp/nghttp2 \
-  && curl -sfL https://github.com/nghttp2/nghttp2/releases/download/v${NGHTTP2_VERSION}/nghttp2-${NGHTTP2_VERSION}.tar.gz | tar zxf - -C /tmp/nghttp2 --strip-components=1 \
-  && cd /tmp/nghttp2 \
-  && ./configure --enable-lib-only --prefix=$PREFIX \
-  && make -j $(nproc) --silent && make install && make clean \
-  && rm -rf /tmp/nghttp2
-
-# libcurl
-RUN mkdir /tmp/libcurl \
-  && curl -sfL https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz | tar zxf - -C /tmp/libcurl --strip-components=1 \
-  && cd /tmp/libcurl \
-  && ./configure --disable-manual --disable-cookies --with-nghttp2=$PREFIX --prefix=$PREFIX \
-  && make -j $(nproc) --silent && make install && make clean \
-  && rm -rf /tmp/libcurl
 
 # pkg-config
 RUN mkdir /tmp/pkg-config \
@@ -71,14 +52,6 @@ RUN mkdir /tmp/openjpeg \
   && make -j $(nproc) install && make clean \
   && rm -rf /tmp/openjpeg
 
-# jpeg_turbo
-RUN mkdir /tmp/jpeg \
-  && curl -sfL https://github.com/libjpeg-turbo/libjpeg-turbo/archive/${LIBJPEG_TURBO_VERSION}.tar.gz | tar zxf - -C /tmp/jpeg --strip-components=1 \
-  && cd /tmp/jpeg \
-  && cmake -G"Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$PREFIX . \
-  && make -j $(nproc) install && make clean \
-  && rm -rf /tmp/jpeg
-
 # webp
 RUN mkdir /tmp/webp \
     && curl -sfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz | tar zxf - -C /tmp/webp --strip-components=1 \
@@ -101,14 +74,13 @@ RUN mkdir /tmp/gdal \
   && curl -sfL https://github.com/OSGeo/gdal/archive/${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
 
 RUN cd /tmp/gdal \
-  && touch config.rpath \
-  && LDFLAGS="-Wl,-rpath,$PREFIX/lib -Wl,-rpath,$PREFIX/lib64 -Wl,-z,origin" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$PREFIX \
       --with-proj=$PREFIX \
       --with-geos=$PREFIX/bin/geos-config \
-      --with-curl=$PREFIX/bin/curl-config \
+      --with-curl \
       --with-openjpeg \
-      --with-jpeg=$PREFIX \
+      --with-jpeg \
       --with-webp=$PREFIX \
       --with-zstd=$PREFIX \
       --with-crypto \
