@@ -1,6 +1,6 @@
 
 SHELL = /bin/bash
-TAG = 2.4.0-light
+TAG = 2.3.2-light
 
 all: build push
 

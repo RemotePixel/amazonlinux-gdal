@@ -17,7 +17,7 @@ ENV \
   OPENJPEG_VERSION=2.3.0 \
   WEBP_VERSION=1.0.1 \
   ZSTD_VERSION=1.3.8 \
-  GDAL_VERSION=2.4.0
+  GDAL_VERSION=2.3.2
 
 # pkg-config
 RUN mkdir /tmp/pkg-config \
