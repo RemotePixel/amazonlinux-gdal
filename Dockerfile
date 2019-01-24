@@ -102,7 +102,7 @@ RUN mkdir /tmp/gdal \
 
 RUN cd /tmp/gdal \
   && touch config.rpath \
-  && LDFLAGS="-Wl,-R,$PREFIX/lib" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+  && LDFLAGS="-Wl,-R,$PREFIX/lib -Wl,-R,$PREFIX/lib64" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$PREFIX \
       --with-proj=$PREFIX \
       --with-geos=$PREFIX/bin/geos-config \
