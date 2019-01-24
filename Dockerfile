@@ -7,7 +7,7 @@ ENV \
 RUN yum makecache fast
 RUN yum install -y automake16 libpng-devel nasm
 
-ENV PREFIX /opt
+ENV PREFIX /var/task
 
 # versions of packages
 ENV \
@@ -101,7 +101,8 @@ RUN mkdir /tmp/gdal \
   && curl -sfL https://github.com/OSGeo/gdal/archive/v${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
 
 RUN cd /tmp/gdal \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+  && touch config.rpath \
+  && LDFLAGS="-Wl,-R,$PREFIX/lib" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$PREFIX \
       --with-proj=$PREFIX \
       --with-geos=$PREFIX/bin/geos-config \
@@ -114,7 +115,7 @@ RUN cd /tmp/gdal \
       --with-libtiff=internal \
       --with-threads \
       --disable-debug \
-      --with-hide-internal-symbols \
+      --with-hide-internal-symbols=yes \
       --without-bsb \
       --without-cfitsio \
       --without-ecw \
