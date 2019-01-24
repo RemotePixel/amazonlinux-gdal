@@ -20,7 +20,7 @@ ENV \
   ZSTD_VERSION=1.3.8 \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
-  GDAL_VERSION=2.4.0
+  GDAL_VERSION=master
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
@@ -98,7 +98,7 @@ ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
 # gdal
 RUN mkdir /tmp/gdal \
-  && curl -sfL https://github.com/OSGeo/gdal/archive/v${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
+  && curl -sfL https://github.com/OSGeo/gdal/archive/${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
 
 RUN cd /tmp/gdal \
   && touch config.rpath \
@@ -163,6 +163,7 @@ RUN cd /tmp/gdal \
 RUN yum clean all
 
 ENV \
+  GDAL_VERSION=2.5.0 \
   GDAL_DATA=$PREFIX/share/gdal \
   PROJ_LIB=$PREFIX/share/proj \
   GDAL_CONFIG=$PREFIX/bin/gdal-config \
