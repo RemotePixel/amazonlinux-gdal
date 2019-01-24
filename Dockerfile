@@ -102,7 +102,7 @@ RUN mkdir /tmp/gdal \
 
 RUN cd /tmp/gdal \
   && touch config.rpath \
-  && LDFLAGS="-Wl,-R,$PREFIX/lib -Wl,-R,$PREFIX/lib64" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+  && LDFLAGS="-Wl,-rpath,$PREFIX/lib -Wl,-rpath,$PREFIX/lib64 -Wl,-z,origin" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
       --prefix=$PREFIX \
       --with-proj=$PREFIX \
       --with-geos=$PREFIX/bin/geos-config \
@@ -163,7 +163,6 @@ RUN cd /tmp/gdal \
 RUN yum clean all
 
 ENV \
-  GDAL_VERSION=2.4.0 \
   GDAL_DATA=$PREFIX/share/gdal \
   PROJ_LIB=$PREFIX/share/proj \
   GDAL_CONFIG=$PREFIX/bin/gdal-config \

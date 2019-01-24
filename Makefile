@@ -18,17 +18,18 @@ shell:
 
 debug-gdal: build
 	docker run \
-		--name lambda \
+		--name amazonlinux \
 		-itd amazonlinux-gdal:${TAG} /bin/bash
-	docker exec -it lambda bash -c 'ldd /var/task/lib/libgdal.so'
-	docker exec -it lambda bash -c 'readelf -d /var/task/lib/libgdal.so'
-	docker stop lambda
-	docker rm lambda
+	docker exec -it amazonlinux bash -c 'ldd /var/task/lib/libgdal.so'
+	docker exec -it amazonlinux bash -c 'readelf -d /var/task/lib/libgdal.so'
+	docker stop amazonlinux
+	docker rm amazonlinux
 
+account=remotepixel
 push:
 	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
-	docker tag amazonlinux-gdal:${TAG} remotepixel/amazonlinux-gdal:${TAG}
-	docker push remotepixel/amazonlinux-gdal:${TAG}
+	docker tag amazonlinux-gdal:${TAG} ${account}/amazonlinux-gdal:${TAG}
+	docker push ${account}/amazonlinux-gdal:${TAG}
 
 clean:
 	docker stop amazonlinux
