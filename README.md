@@ -32,7 +32,7 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
   - `Github Branch:` [gdal2.3.2-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.2-light)
 
 
-### Available Drivers
+### Available Drivers (shipped with GDAL)
 - Proj4 (*5.2.0*)
 - GEOS (*3.7.1*)
 - GeoTIFF (internal)
@@ -41,7 +41,10 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 - JPEG2000 (OpenJPEG *2.3.0*)
 - ngHTTP2 (*1.35.1*) **# Not in -light versions**
 - curl (*7.59.0*) **# Not in -light versions**
+- PNG (*1.6.36*) **# Not in -light versions**
 - JPEGTURBO (*2.0.1*) **# Not in -light versions**
+
+**Note:** Drivers like curl and PNG are enabled by default, is using `-light` version, GDAL will use the default libs available on the amazonlinux instance.
 
 ## Use it on from DockerHub
 ```
