@@ -52,7 +52,7 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 
 ```
   $ gdalinfo --formats
-  Supported Formats: \\n
+  Supported Formats:
     VRT -raster- (rw+v): Virtual Raster
     DERIVED -raster- (ro): Derived datasets using VRT pixel functions
     GTiff -raster- (rw+vs): GeoTIFF
