@@ -16,6 +16,7 @@ Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geo
 - WEBP (*1.0.1*)
 - ngHTTP2 (*1.35.1*)
 - curl (*7.59.0*)
+- PNG (*1.6.36*)
 - JPEGTURBO (*2.0.1*)
 - JPEG2000 (OpenJPEG *2.3.0*)
 
