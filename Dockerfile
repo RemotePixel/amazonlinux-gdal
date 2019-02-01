@@ -80,6 +80,7 @@ RUN cd /tmp/gdal \
       --with-geos=$PREFIX/bin/geos-config \
       --with-curl \
       --with-openjpeg \
+      --with-png \
       --with-jpeg \
       --with-webp=$PREFIX \
       --with-zstd=$PREFIX \
@@ -120,7 +121,6 @@ RUN cd /tmp/gdal \
       --without-pcre \
       --without-perl \
       --without-pg \
-      --without-png \
       --without-python \
       --without-qhull \
       --without-sde \
