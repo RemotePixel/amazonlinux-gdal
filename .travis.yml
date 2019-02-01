@@ -1,0 +1,12 @@
+services:
+  - docker
+
+script:
+  - 'make build'
+  - 'make test'
+
+after_success:
+  - if [[ "$TRAVIS_BRANCH" =~ ^gdal(2.4.0|2.5.0dev|2.3.2)(-light)?$ ]]; then
+      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
+      make push ;
+    fi

@@ -1,20 +1,14 @@
-
 SHELL = /bin/bash
 TAG = 2.4.0
+IMAGE := ${DOCKER_USERNAME}/amazonlinux-gdal:${TAG}
 
 all: build push
 
 build:
-	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
+	docker build -f Dockerfile -t ${IMAGE} .
 
 shell:
-	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
-	docker run \
-		--name amazonlinux \
-		--volume $(shell pwd)/:/data \
-		--rm \
-		-it \
-		amazonlinux-gdal:${TAG} /bin/bash
+	docker run --name amazonlinux --volume $(shell pwd)/:/data --rm  -it ${IMAGE} /bin/bash
 
 debug-gdal: build
 	docker run \
@@ -25,11 +19,12 @@ debug-gdal: build
 	docker stop amazonlinux
 	docker rm amazonlinux
 
-account=remotepixel
+test:
+	docker run ${IMAGE} bash -c "gdalinfo --version | grep '${TAG}'"
+	docker run ${IMAGE} bash -c "gdalinfo --formats | grep 'JP2OpenJPEG'"
+
 push:
-	docker build -f Dockerfile --tag amazonlinux-gdal:${TAG} .
-	docker tag amazonlinux-gdal:${TAG} ${account}/amazonlinux-gdal:${TAG}
-	docker push ${account}/amazonlinux-gdal:${TAG}
+	docker push ${IMAGE}
 
 clean:
 	docker stop amazonlinux
