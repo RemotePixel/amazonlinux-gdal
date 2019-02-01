@@ -51,8 +51,8 @@ RUN mkdir /tmp/pkg-config \
 RUN mkdir /tmp/proj \
    && curl -sfL http://download.osgeo.org/proj/proj-$PROJ_VERSION.tar.gz | tar zxf - -C /tmp/proj --strip-components=1 \
    && cd /tmp/proj \
-   && CFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
-   && make -j $(nproc) --silent && make install && make clean \
+   && ./configure --prefix=$PREFIX \
+   && make && make install && make clean \
    && rm -rf /tmp/proj
 
 # geos
