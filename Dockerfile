@@ -14,6 +14,7 @@ ENV \
   PKGCONFIG_VERSION=0.29.2 \
   PROJ_VERSION=5.2.0 \
   GEOS_VERSION=3.7.1 \
+  LIBPNG_VERSION=1.6.36 \
   OPENJPEG_VERSION=2.3.0 \
   LIBJPEG_TURBO_VERSION=2.0.1 \
   WEBP_VERSION=1.0.1 \
@@ -62,6 +63,14 @@ RUN mkdir /tmp/geos \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/geos
 
+# png
+RUN mkdir /tmp/png \
+  && curl -sfL http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.gz | tar zxf - -C /tmp/png --strip-components=1 \
+  && cd /tmp/png \
+  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
+  && make -j $(nproc) --silent && make install && make clean \
+  && rm -rf /tmp/png
+
 # openjpeg
 RUN mkdir /tmp/openjpeg \
   && curl -sfL https://github.com/uclouvain/openjpeg/archive/v$OPENJPEG_VERSION.tar.gz | tar zxf - -C /tmp/openjpeg --strip-components=1 \
@@ -108,6 +117,7 @@ RUN cd /tmp/gdal \
       --with-geos=$PREFIX/bin/geos-config \
       --with-curl=$PREFIX/bin/curl-config \
       --with-openjpeg \
+      --with-png \
       --with-jpeg=$PREFIX \
       --with-webp=$PREFIX \
       --with-zstd=$PREFIX \
@@ -148,7 +158,6 @@ RUN cd /tmp/gdal \
       --without-pcre \
       --without-perl \
       --without-pg \
-      --without-png \
       --without-python \
       --without-qhull \
       --without-sde \
