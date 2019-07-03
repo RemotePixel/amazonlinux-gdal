@@ -7,9 +7,11 @@ Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geo
 The aim of this repo is to construct docker image to use when creating AWS Lambda package (with python 3.6).
 
 ### GDAL Versions
-- **2.5.0dev** (HEAD)
-  - `Docker:` **remotepixel/amazonlinux-gdal:2.5.0dev**
-  - `Github Branch:` [gdal2.5.0dev](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.5.0dev)
+
+- **2.4.1** (22 March 2019)
+  - `Docker:` **remotepixel/amazonlinux-gdal:2.4.1**
+  - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.1)
+
 - **2.4.0** (14 Dec 2018)
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.0**
   - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0)
@@ -21,9 +23,7 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 
 ###### Image with minimal support: `-light` (no HTTP/2, no JPEGTURBO)
 
-- **2.5.0dev** (HEAD)
-  - `Docker:` **remotepixel/amazonlinux-gdal:gdal2.5.0dev-light**
-  - `Github Branch:` [gdal2.5.0dev-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.5.0dev-light)
+
 - **2.4.0** (14 Dec 2018)
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.0-light**
   - `Github Branch:` [gdal2.4.0-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0-light)
@@ -31,6 +31,14 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
   - `Docker:` **remotepixel/amazonlinux-gdal:2.3.2-light**
   - `Github Branch:` [gdal2.3.2-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.2-light)
 
+
+##### Deprecated 
+
+- **2.5.0dev** (HEAD)
+  - `Docker:` **remotepixel/amazonlinux-gdal:2.5.0dev**
+  - `Github Branch:` [gdal2.5.0dev](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.5.0dev)
+  - `Docker:` **remotepixel/amazonlinux-gdal:gdal2.5.0dev-light**
+  - `Github Branch:` [gdal2.5.0dev-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.5.0dev-light)
 
 ### Available Drivers (shipped with GDAL)
 - Proj4 (*5.2.0*)
