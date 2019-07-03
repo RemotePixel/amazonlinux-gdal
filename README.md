@@ -1,6 +1,6 @@
 # amazonlinux-gdal
 
-Create an **AWS lambda** like docker image with python 3.6 and GDAL.
+Create an **AWS lambda** like docker image with python 3 and GDAL.
 
 Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda) and [mojodna/lambda-layer-rasterio](https://github.com/mojodna/lambda-layer-rasterio).
 
@@ -8,29 +8,31 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 
 ### GDAL Versions
 
-- **2.4.1** (22 March 2019)
+- **3.0.0** (9 May 2019) - python 3.7
+  - `Docker:` **remotepixel/amazonlinux-gdal:3.0.0**
+  - `Github Branch:` [gdal3.0.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal3.0.0)
+
+- **2.4.1** (22 March 2019) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.1**
   - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.1)
 
-- **2.4.0** (14 Dec 2018)
+- **2.4.0** (14 Dec 2018) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.0**
   - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0)
 
-- **2.3.2** (21 Sep 2018)
+- **2.3.2** (21 Sep 2018) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.3.2**
   - `Github Branch:` [gdal2.3.2](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.2)
 
 
 ###### Image with minimal support: `-light` (no HTTP/2, no JPEGTURBO)
 
-
-- **2.4.0** (14 Dec 2018)
+- **2.4.0** (14 Dec 2018) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.0-light**
   - `Github Branch:` [gdal2.4.0-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.0-light)
-- **2.3.2** (21 Sep 2018)
+- **2.3.2** (21 Sep 2018) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.3.2-light**
   - `Github Branch:` [gdal2.3.2-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.3.2-light)
-
 
 ##### Deprecated 
 
@@ -41,16 +43,16 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
   - `Github Branch:` [gdal2.5.0dev-light](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.5.0dev-light)
 
 ### Available Drivers (shipped with GDAL)
-- Proj4 (*5.2.0*)
-- GEOS (*3.7.1*)
-- GeoTIFF (internal)
-- ZSTD (*1.3.8*)
-- WEBP (*1.0.1*)
-- JPEG2000 (OpenJPEG *2.3.0*)
-- ngHTTP2 (*1.35.1*) **# Not in -light versions**
-- curl (*7.59.0*) **# Not in -light versions**
-- PNG (*1.6.36*) **# Not in -light versions**
-- JPEGTURBO (*2.0.1*) **# Not in -light versions**
+- Proj4
+- GEOS
+- GeoTIFF
+- ZSTD
+- WEBP
+- JPEG2000
+- ngHTTP2 **# Not in -light versions**
+- curl **# Not in -light versions**
+- PNG **# Not in -light versions**
+- JPEGTURBO **# Not in -light versions**
 
 **Note:** Drivers like curl and PNG are enabled by default, is using `-light` version, GDAL will use the default libs available on the amazonlinux instance.
 
@@ -207,7 +209,7 @@ A couple environment variables are set when creating the images:
 
 ## Create a Lambda package
 ```bash
-docker run --name lambda -itd remotepixel/amazonlinux-gdal:2.4.0 /bin/bash
+docker run --name lambda -itd remotepixel/amazonlinux-gdal:2.4.1 /bin/bash
 docker exec -it lambda bash -c 'pip3 install rasterio[s3] --no-binary numpy,rasterio -t /tmp/python -U'
 docker exec -it lambda bash -c 'cd /tmp/python; zip -r9q /tmp/package.zip *'
 docker exec -it lambda bash -c 'cd /var/task; zip -r9q --symlinks /tmp/package.zip lib/*.so*'
