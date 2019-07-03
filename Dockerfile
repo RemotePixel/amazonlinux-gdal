@@ -15,13 +15,13 @@ ENV \
   PROJ_VERSION=5.2.0 \
   GEOS_VERSION=3.7.1 \
   LIBPNG_VERSION=1.6.36 \
-  OPENJPEG_VERSION=2.3.0 \
+  OPENJPEG_VERSION=2.3.1 \
   LIBJPEG_TURBO_VERSION=2.0.1 \
-  WEBP_VERSION=1.0.1 \
+  WEBP_VERSION=1.0.2 \
   ZSTD_VERSION=1.3.8 \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
-  GDAL_VERSION=2.4.0
+  GDAL_VERSION=2.4.1
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
@@ -51,7 +51,7 @@ RUN mkdir /tmp/pkg-config \
 RUN mkdir /tmp/proj \
    && curl -sfL http://download.osgeo.org/proj/proj-$PROJ_VERSION.tar.gz | tar zxf - -C /tmp/proj --strip-components=1 \
    && cd /tmp/proj \
-   && ./configure --prefix=$PREFIX \
+   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
    && make && make install && make clean \
    && rm -rf /tmp/proj
 
