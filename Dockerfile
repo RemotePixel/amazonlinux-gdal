@@ -12,16 +12,16 @@ ENV PREFIX /var/task
 # versions of packages
 ENV \
   PKGCONFIG_VERSION=0.29.2 \
-  PROJ_VERSION=5.2.0 \
-  GEOS_VERSION=3.7.1 \
+  PROJ_VERSION=6.1.1 \
+  GEOS_VERSION=3.7.2 \
   LIBPNG_VERSION=1.6.36 \
   OPENJPEG_VERSION=2.3.1 \
   LIBJPEG_TURBO_VERSION=2.0.1 \
   WEBP_VERSION=1.0.2 \
-  ZSTD_VERSION=1.3.8 \
+  ZSTD_VERSION=1.4.0 \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
-  GDAL_VERSION=2.4.1
+  GDAL_VERSION=master
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
@@ -107,7 +107,7 @@ ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
 # gdal
 RUN mkdir /tmp/gdal \
-  && curl -sfL https://github.com/OSGeo/gdal/archive/v${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
+  && curl -sfL https://github.com/OSGeo/gdal/archive/${GDAL_VERSION}.tar.gz | tar zxf - -C /tmp/gdal --strip-components=2
 
 RUN cd /tmp/gdal \
   && touch config.rpath \

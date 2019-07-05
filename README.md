@@ -1,18 +1,18 @@
-# amazonlinux-gdal:2.4.1
+# amazonlinux-gdal:latest
 
-Create an **AWS lambda** like docker image with python 3.6 and GDAL.
+Create an **AWS lambda** like docker image with python 3.7 and GDAL.
 
 Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda) and [mojodna/lambda-layer-rasterio](https://github.com/mojodna/lambda-layer-rasterio).
 
 #### Versions
-- Python: **3.6.5**
-- GDAL: **2.4.1** https://github.com/OSGeo/gdal/releases/tag/v2.4.1
+- Python: **3.7.3**
+- GDAL: **HEAD** (3 July 2019)
 
 #### Drivers
-- Proj4 (*5.2.0*)
-- GEOS (*3.7.1*)
+- Proj (*6.1.1*)
+- GEOS (*3.7.2*)
 - GeoTIFF (internal)
-- ZSTD (*1.3.8*)
+- ZSTD (*1.4.0*)
 - WEBP (*1.0.2*)
 - ngHTTP2 (*1.35.1*)
 - curl (*7.59.0*)
@@ -24,16 +24,16 @@ Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geo
 ```bash
 $ docker login
 
-$ docker build -f Dockerfile --tag amazonlinux-gdal:2.4.1 .
+$ docker build -f Dockerfile --tag amazonlinux-gdal:latest .
 
 $ docker run --name amazonlinux \
 	--volume $(shell pwd)/:/data \
-	--rm -it amazonlinux-gdal:2.4.1 /bin/bash
+	--rm -it amazonlinux-gdal:latest /bin/bash
 ```
 
 See [`/Makefile`](/Makefile) for other pre-defined commands.
 
 ## Use it on from DockerHub
 ```
-FROM remotepixel/amazonlinux-gdal:2.4.1
+FROM remotepixel/amazonlinux-gdal:latest
 ```
