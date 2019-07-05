@@ -21,7 +21,7 @@ ENV \
   ZSTD_VERSION=1.3.8 \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
-  GDAL_VERSION=2.4.1
+  GDAL_VERSION=2.4.2
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
