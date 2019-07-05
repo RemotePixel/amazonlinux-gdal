@@ -5,7 +5,7 @@ Create an **AWS lambda** like docker image with python 3.7 and GDAL.
 Inspired from [developmentseed/geolambda](https://github.com/developmentseed/geolambda) and [mojodna/lambda-layer-rasterio](https://github.com/mojodna/lambda-layer-rasterio).
 
 #### Versions
-- Python: **3.7.3**
+- Python: **3.7**
 - GDAL: **3.0.0** https://github.com/OSGeo/gdal/releases/tag/v3.0.0
 
 #### Drivers
