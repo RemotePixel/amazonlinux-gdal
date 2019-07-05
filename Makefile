@@ -1,5 +1,5 @@
 SHELL = /bin/bash
-TAG = 3.0.0
+TAG = 3.0.1
 IMAGE := ${DOCKER_USERNAME}/amazonlinux-gdal:${TAG}
 
 all: build push

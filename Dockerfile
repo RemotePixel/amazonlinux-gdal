@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-python3.6
+FROM lambci/lambda:build-python3.7
 
 ENV \
   LANG=en_US.UTF-8 \
@@ -21,7 +21,7 @@ ENV \
   ZSTD_VERSION=1.4.0 \
   CURL_VERSION=7.59.0 \
   NGHTTP2_VERSION=1.35.1 \
-  GDAL_VERSION=3.0.0
+  GDAL_VERSION=3.0.1
 
 # nghttp2
 RUN mkdir /tmp/nghttp2 \
