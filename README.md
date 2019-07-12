@@ -10,7 +10,7 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 
 - **3.0.1** (5 July 2019) - python 3.7
   - `Docker:` **remotepixel/amazonlinux-gdal:3.0.1**
-  - `Github Branch:` [gdal3.0.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal3.0.1)
+  - `Github Branch:` [gdal3.0.1](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal3.0.1)
 
 - **3.0.0** (9 May 2019) - python 3.7
   - `Docker:` **remotepixel/amazonlinux-gdal:3.0.0**
@@ -18,11 +18,11 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 
 - **2.4.2** (5 July 2019) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.2**
-  - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.2)
+  - `Github Branch:` [gdal2.4.2](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.2)
 
 - **2.4.1** (22 March 2019) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.1**
-  - `Github Branch:` [gdal2.4.0](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.1)
+  - `Github Branch:` [gdal2.4.1](https://github.com/RemotePixel/amazonlinux-gdal/tree/gdal2.4.1)
 
 - **2.4.0** (14 Dec 2018) - python 3.6
   - `Docker:` **remotepixel/amazonlinux-gdal:2.4.0**
