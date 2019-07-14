@@ -7,7 +7,9 @@ ENV \
 RUN yum makecache fast
 RUN yum install -y automake16 libpng-devel nasm
 
-ENV PREFIX /var/task
+ARG PREFIX=/var/task
+
+ENV PREFIX=$PREFIX
 
 # versions of packages
 ENV \
