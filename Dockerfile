@@ -9,7 +9,8 @@ RUN yum install -y automake16 libpng-devel nasm
 
 ENV PREFIX /var/task
 
-# versions of packages
+# versions of packages, see also rasterio test matrix at:
+# - https://github.com/mapbox/rasterio/blob/master/.travis.yml
 ENV \
   PKGCONFIG_VERSION=0.29.2 \
   PROJ_VERSION=5.2.0 \
@@ -179,5 +180,9 @@ ENV \
 
 ENV PATH=$PREFIX/bin:$PATH
 
-RUN pip3 install pip -U
-RUN pip3 install cython numpy --no-binary numpy
+# numpy 1.17 requires an explicit c99 compiler option
+# - https://github.com/numpy/numpy/pull/12783/files
+ENV CFLAGS='-std=c99'
+RUN pip3 install pip -U && \
+    pip3 install cython numpy "gdal==${GDAL_VERSION}" rasterio --no-binary :all:
+
