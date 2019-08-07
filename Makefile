@@ -27,9 +27,33 @@ test:
 	docker run ${BUILD} bash -c "python --version | grep '${PY_VERSION}'"
 
 push:
-	#docker tag ${IMAGE} ${BUILD}
 	docker push ${DOCKER_USERNAME}/${BUILD}
 
-clean:
-	docker stop amazonlinux
-	docker rm amazonlinux
+container-clean:
+	docker stop amazonlinux > /dev/null 2>&1 || true
+	docker rm amazonlinux > /dev/null 2>&1 || true
+
+# ---
+# lambda layer build and package using /opt
+
+LAYER_BUILD = ${BUILD}-layer
+LAYER_PACKAGE := amazonlinux-${TAG}-layer.zip
+
+lambda-layer-build:
+	docker build -f Dockerfile -t ${LAYER_BUILD} --build-arg prefix=/opt .
+
+lambda-layer-shell: lambda-layer-build container-clean
+	docker run --name amazonlinux --volume $(shell pwd)/:/data --rm  -it ${LAYER_BUILD} /bin/bash
+
+lambda-layer-package: lambda-layer-build container-clean
+	docker run --name amazonlinux -itd ${LAYER_BUILD} /bin/bash
+	docker exec -it amazonlinux bash -c 'mkdir -p $${PREFIX}/python/lib/python${PY_VERSION}/site-packages'
+	docker exec -it amazonlinux bash -c 'rsync -a /var/lang/lib/python${PY_VERSION}/site-packages/ $${PREFIX}/python/lib/python${PY_VERSION}/site-packages/'
+	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip python'
+	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip lib/*.so*'
+	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip lib64/*.so*'
+	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip bin'
+	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 /tmp/package.zip share'
+	docker cp amazonlinux:/tmp/package.zip ${LAYER_PACKAGE}
+	docker stop amazonlinux && docker rm amazonlinux
+
