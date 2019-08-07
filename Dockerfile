@@ -7,7 +7,10 @@ ENV \
 RUN yum makecache fast
 RUN yum install -y automake16 libpng-devel nasm
 
-ENV PREFIX /var/task
+# labda runtime: /var/task
+# labda layer: /opt
+ARG prefix=/var/task
+ENV PREFIX=${prefix}
 
 # versions of packages, see also rasterio test matrix at:
 # - https://github.com/mapbox/rasterio/blob/master/.travis.yml
