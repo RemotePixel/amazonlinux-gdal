@@ -231,7 +231,48 @@ You can find a more complex example in https://github.com/RemotePixel/remotepixe
 
 
 ## Create a Lambda layer
-`TODO`
+For this example, I will use a pyhton Lambda as the use case scenario.
+
+According to AWS [docs](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html), a Lambda layer must have the following format:
+
+```
+package.zip
+├── bin     # executables
+├── lib     # libraries
+├── lib64   # libraries 64-bit
+├── python  # python packages
+└── share   # shared libraries
+```
+
+### Creating the package
+
+To create a layer, we just need to package all the thinfs we need into a `package.zip` with the format described above. To do that, we can use a slightly modified version of the preivous script:
+
+```bash
+docker run --name lambda -itd remotepixel/amazonlinux-gdal:3.0.1 /bin/bash
+# This is just an example, installing gdal bindings for python
+docker exec -it lambda bash -c 'mkdir python'
+docker exec -it lambda bash -c 'pip install gdal==3.0.1 -no-binary :all: -t python -U'
+docker exec -it lambda bash -c 'zip -r9 /tmp/package.zip python'
+docker exec -it lambda bash -c 'zip -r9 --symlinks /tmp/package.zip lib/*.so*'
+docker exec -it lambda bash -c 'zip -r9 --symlinks /tmp/package.zip lib64/*.so*'
+docker exec -it lambda bash -c 'zip -r9 --symlinks /tmp/package.zip bin'
+docker exec -it lambda bash -c 'zip -r9 /tmp/package.zip share'
+docker cp lambda:/tmp/package.zip package.zip
+docker stop lambda
+docker rm lambda
+```
+
+The above script should result in a `package.zip` that can be uploaded as a Lambda layer. If you are using Chalice as the deployment tool, you do not need, per this example, to include `gdal` in the requirements file. It will be already available for use. But, you should have it installed locally, or Chalice won't deploy.
+
+### Environment variables
+
+You should, also, include some environment variables to your function. Mainly:
+
+```bash
+PROJ_LIB="/opt/share/proj"
+GDAL_DATA="/opt/share/gdal"
+```
 
 ## Package architecture and AWS Lambda config
 :warning: AWS Lambda will need `GDAL_DATA` to be set to `/var/task/share/gdal` to be able to work :warning:
