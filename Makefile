@@ -37,23 +37,27 @@ container-clean:
 # lambda layer build and package using /opt
 
 LAYER_BUILD = ${BUILD}-layer
-LAYER_PACKAGE := amazonlinux-${TAG}-layer.zip
+LAYER_PACKAGE := amazonlinux-${TAG}-layer
 
 lambda-layer-build:
 	docker build -f Dockerfile -t ${LAYER_BUILD} --build-arg prefix=/opt .
 
 lambda-layer-shell: lambda-layer-build container-clean
-	docker run --name amazonlinux --volume $(shell pwd)/:/data --rm  -it ${LAYER_BUILD} /bin/bash
+	docker run --name amazonlinux --volume $(shell pwd)/:/data --rm -it ${LAYER_BUILD} /bin/bash
+
+lambda-layer-test: lambda-layer-build
+	docker run --volume $(shell pwd)/:/data --rm -it ${LAYER_BUILD} /bin/bash -c '/data/tests/test.sh'
 
 lambda-layer-package: lambda-layer-build container-clean
-	docker run --name amazonlinux -itd ${LAYER_BUILD} /bin/bash
-	docker exec -it amazonlinux bash -c 'mkdir -p $${PREFIX}/python/lib/python${PY_VERSION}/site-packages'
-	docker exec -it amazonlinux bash -c 'rsync -a /var/lang/lib/python${PY_VERSION}/site-packages/ $${PREFIX}/python/lib/python${PY_VERSION}/site-packages/'
-	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip python'
-	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip lib/*.so*'
-	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip lib64/*.so*'
-	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 --symlinks /tmp/package.zip bin'
-	docker exec -it amazonlinux bash -c 'cd $${PREFIX} && zip -r9 /tmp/package.zip share'
-	docker cp amazonlinux:/tmp/package.zip ${LAYER_PACKAGE}
+	docker run --name amazonlinux \
+		-e PREFIX=${PREFIX} \
+		-e PY_VERSION=${PY_VERSION} \
+		-e LAYER_PACKAGE=${LAYER_PACKAGE} \
+		-itd ${LAYER_BUILD} /bin/bash
+	docker cp package_lambda_layer.sh amazonlinux:/tmp/package_lambda_layer.sh
+	docker exec -it amazonlinux bash -c '/tmp/package_lambda_layer.sh'
+	mkdir -p ./packages
+	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_libs.zip ./packages/
+	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_python.zip ./packages/
 	docker stop amazonlinux && docker rm amazonlinux
 
