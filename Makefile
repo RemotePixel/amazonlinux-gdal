@@ -59,5 +59,8 @@ lambda-layer-package: lambda-layer-build container-clean
 	mkdir -p ./packages
 	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_libs.zip ./packages/
 	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_python.zip ./packages/
+	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_geopandas.zip ./packages/
+	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_pandas.zip ./packages/
+	docker cp amazonlinux:/tmp/${LAYER_PACKAGE}_pyarrow.zip ./packages/
 	docker stop amazonlinux && docker rm amazonlinux
 

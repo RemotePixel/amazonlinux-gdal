@@ -215,5 +215,22 @@ ENV PATH=$PREFIX/bin:$PATH
 # numpy 1.17 requires an explicit c99 compiler option
 # - https://github.com/numpy/numpy/pull/12783/files
 ENV CFLAGS='-std=c99'
-RUN pip3 install pip -U && \
-    pip3 install cython numpy "gdal==${GDAL_VERSION}" pycrs pyproj rasterio shapely --no-binary :all:
+
+# Using individual docker layers to cache a couple of
+# very common python packages that others depend on.
+RUN pip3 install -U pip
+RUN pip3 install -U cython numpy --no-compile --no-binary :all: 
+#RUN pip3 install "${PIP_OPTIONS}" numpy
+# Only install python packages that depend on the libs in this image.
+RUN pip3 install -U \
+    'gdal >=2.4,<3.0' \
+    pyproj \
+    rasterio \
+    fiona \
+    shapely \
+    pycrs \
+    --no-compile --no-binary :all: 
+
+# only for python 3.6; use built-in dataclasses for 3.7+
+RUN pip3 install -U dataclasses --no-compile --no-binary :all: 
+
