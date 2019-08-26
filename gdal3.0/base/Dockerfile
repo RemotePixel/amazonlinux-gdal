@@ -3,8 +3,6 @@ FROM lambci/lambda-base:build
 LABEL maintainer="RemotePixel <contact@remotepixel.ca>"
 LABEL authors="Vincent Sarago  <vincent.sarago@gmail.com>"
 
-ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
-
 RUN yum makecache fast
 RUN yum install -y automake16 libpng-devel nasm
 
@@ -110,6 +108,7 @@ RUN cd /tmp/gdal \
       --with-crypto \
       --with-libtiff=internal \
       --with-threads \
+      --with-sqlite3 \
       --disable-debug \
       --with-hide-internal-symbols=yes \
       --without-bsb \
@@ -147,7 +146,6 @@ RUN cd /tmp/gdal \
       --without-python \
       --without-qhull \
       --without-sde \
-      --without-sqlite3 \
       --without-xerces \
       --without-xml2
 

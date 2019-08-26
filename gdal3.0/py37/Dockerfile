@@ -27,5 +27,4 @@ ENV \
   PATH=$PREFIX/bin:$PATH
 
 RUN pip install rasterio==1.0.25 shapely numpy --no-binary :all: -t $PREFIX/python
-
 ENV PYTHONPATH=$PYTHONPATH:$PREFIX/python
