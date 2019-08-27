@@ -5,8 +5,8 @@ baseimage:
 	docker build  -f base/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION} .
 
 image:
-	docker build -f py37/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py37 .
-	docker build -f py36/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py36 .
+	docker build --build-arg PYTHON_VERSION=3.6 --build-arg GDAL_VERSION=${GDAL_VERSION} -f build/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py36 .
+	docker build --build-arg PYTHON_VERSION=3.7 --build-arg GDAL_VERSION=${GDAL_VERSION} -f build/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py37 .
 
 layers:
 	#python 3.7
