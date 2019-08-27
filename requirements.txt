@@ -1,0 +1,14 @@
+cython
+numpy >=1.17,<2.0
+gdal >=2.4,<3.0
+geopandas
+#pyarrow
+pycrs
+pyproj
+rasterio
+shapely
+
+# only for python 3.6
+# use built-in dataclasses for 3.7+
+dataclasses
+
