@@ -1,0 +1,78 @@
+version: 2
+common: &common
+  machine: true
+  working_directory: ~/amazonlinux-gdal
+  steps:
+    - checkout
+    - attach_workspace:
+        at: ~/amazonlinux-gdal
+    - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+    - run:
+        name: create amazonlinux:gdal image
+        command: docker build -f gdal${GDAL_VERSION}/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION} .
+    - run:
+        name: create layers 
+        command: |
+          for PYTHON_VERSION in $PYTHON_VERSIONS; do
+            echo "Building image with python ${PYTHON_VERSION}"
+            docker build \
+              --build-arg PYTHON_VERSION=${PYTHON_VERSION}\
+              --build-arg GDAL_VERSION=${GDAL_VERSION} \
+              -f build/Dockerfile \
+              -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION} .
+            
+            echo "Creating aws lambda layer for python ${PYTHON_VERSION}"
+            docker run --name lambda --volume $(pwd)/:/local \
+              --env GDAL_VERSION=${GDAL_VERSION} --env PYTHON_VERSION=${PYTHON_VERSION} \
+              -itd remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION} bash
+            docker cp ./scripts/create-lambda-layer.sh lambda:/tmp/create-lambda-layer.sh
+            docker exec -it lambda bash -c '/tmp/create-lambda-layer.sh ${GDAL_VERSION} ${PYTHON_VERSION}'
+            docker stop lambda
+            docker rm lambda
+
+            echo "Test layer for python ${PYTHON_VERSION}"
+            docker run \
+                --name lambda \
+                --volume $(pwd)/:/local \
+                --env GDAL_DATA=/opt/share/gdal \
+                --env PROJ_LIB=/opt/share/proj \
+                --env GDAL_VERSION=${GDAL_VERSION} \
+                --env PYTHON_VERSION=${PYTHON_VERSION} \
+                --env PYTHONPATH=/opt/python:/var/runtime \
+                -itd lambci/lambda:build-python${PYTHON_VERSION} bash
+            docker cp ./layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip lambda:/tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip
+            docker exec -it lambda bash -c 'unzip -q /tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip -d /opt/'
+            driver=$(docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta["driver"])')
+            docker stop lambda
+            docker rm lambda
+            if [[ $driver != "GTiff" ]] exit 1
+          done
+      - persist_to_workspace:
+          root: .
+          paths:
+            - layer-gdal${GDAL_VERSION}-py3.6-light.zip
+            - layer-gdal${GDAL_VERSION}-py3.6.zip
+            - layer-gdal${GDAL_VERSION}-py3.7-light.zip
+            - layer-gdal${GDAL_VERSION}-py3.7.zip
+
+jobs:
+  "gdal-3.0":
+    <<: *common
+    docker:
+        environment:
+          - GDAL_VERSION=3.0
+          - PYTHON_VERSION="3.6 3.7"
+
+  # "gdal-2.2":
+  #   <<: *common
+  #   docker:
+  #       environment:
+  #         - GDAL_VERSION=2.2
+  #         - PYTHON_VERSION="3.6 3.7"
+
+workflows:
+  version: 2
+  build_and_push:
+    jobs:
+      - "gdal3.0"
+      # - "gdal2.2"

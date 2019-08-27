@@ -16,6 +16,7 @@ docker run \
     -itd lambci/lambda:build-python${PYTHON_VERSION} bash
 docker cp ./layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip lambda:/tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip
 docker exec -it lambda bash -c 'unzip -q /tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip -d /opt/'
-docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta)'
+driver=$(docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta["driver"])')
 docker stop lambda
 docker rm lambda
+if [[ $driver != "GTiff" ]] exit 1

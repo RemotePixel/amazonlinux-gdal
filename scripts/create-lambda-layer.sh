@@ -27,10 +27,10 @@ cd $PREFIX && find lib -name \*.so\* -exec strip {} \;
 echo "Create archives"
 PACKAGE_NAME=layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}
 cd $PREFIX && zip -r9q /tmp/${PACKAGE_NAME}.zip python
-cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip lib/*.so* share bin #<--- do we want the binaries ?
+cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip lib/*.so* share # bin <--- do we want the binaries ?
 
 # We also make a light layer with only the libs
-cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}-light.zip lib/*.so* share bin #<--- do we want the binaries ?
+cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}-light.zip lib/*.so* share # bin <--- do we want the binaries ?
 
 cp /tmp/${PACKAGE_NAME}.zip /local/${PACKAGE_NAME}.zip
 cp /tmp/${PACKAGE_NAME}-light.zip /local/${PACKAGE_NAME}-light.zip
