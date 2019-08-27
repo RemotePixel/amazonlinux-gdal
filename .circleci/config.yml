@@ -6,7 +6,15 @@ common: &common
     - checkout
     - attach_workspace:
         at: ~/amazonlinux-gdal
-    - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+    - persist_to_workspace:
+        root: .
+        paths:
+          - layer-gdal${GDAL_VERSION}-py3.6-light.zip
+          - layer-gdal${GDAL_VERSION}-py3.6.zip
+          - layer-gdal${GDAL_VERSION}-py3.7-light.zip
+          - layer-gdal${GDAL_VERSION}-py3.7.zip
+    - run: |
+        echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
     - run:
         name: create amazonlinux:gdal image
         command: docker build -f gdal${GDAL_VERSION}/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION} .
@@ -47,13 +55,6 @@ common: &common
             docker rm lambda
             if [[ $driver != "GTiff" ]] exit 1
           done
-      - persist_to_workspace:
-          root: .
-          paths:
-            - layer-gdal${GDAL_VERSION}-py3.6-light.zip
-            - layer-gdal${GDAL_VERSION}-py3.6.zip
-            - layer-gdal${GDAL_VERSION}-py3.7-light.zip
-            - layer-gdal${GDAL_VERSION}-py3.7.zip
 
 jobs:
   "gdal-3.0":
