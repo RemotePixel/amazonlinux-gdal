@@ -7,13 +7,6 @@ common: &common
     - checkout
     - attach_workspace:
         at: ~/amazonlinux-gdal
-    - persist_to_workspace:
-        root: .
-        paths:
-          - layer-gdal${GDAL_VERSION}-py3.6-light.zip
-          - layer-gdal${GDAL_VERSION}-py3.6.zip
-          - layer-gdal${GDAL_VERSION}-py3.7-light.zip
-          - layer-gdal${GDAL_VERSION}-py3.7.zip
     - run: |
         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
     - run:
@@ -56,6 +49,13 @@ common: &common
             docker rm lambda
             if [[ $driver != "GTiff" ]] exit 1
           done
+    - persist_to_workspace:
+        root: .
+        paths:
+          - layer-gdal${GDAL_VERSION}-py3.6-light.zip
+          - layer-gdal${GDAL_VERSION}-py3.6.zip
+          - layer-gdal${GDAL_VERSION}-py3.7-light.zip
+          - layer-gdal${GDAL_VERSION}-py3.7.zip
 
 jobs:
   "gdal-3.0":
