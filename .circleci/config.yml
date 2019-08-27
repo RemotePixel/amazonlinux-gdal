@@ -74,11 +74,11 @@ workflows:
   version: 2
   build_and_push:
     jobs:
-      - "gdal-3.0"
+      - "gdal-3.0":
         filters:  # required since `deploy` has tag filters AND requires `build`
           tags:
             only: /.*/
-      # - "gdal-2.4"
+      # - "gdal-2.4":
       #   filters:  # required since `deploy` has tag filters AND requires `build`
       #     tags:
       #       only: /.*/      
