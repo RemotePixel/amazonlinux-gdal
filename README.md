@@ -166,10 +166,19 @@ The aim of this repo is to construct docker image to use when creating AWS Lambd
 </details>
 
 
-## Use it on from DockerHub
-```
-FROM remotepixel/amazonlinux-gdal:{TAG}
-```
+## Create a Lambda package
+
+You can use the docker container to either build a full package (you provide all the libraries)
+or adapt for the use of AWS Lambda layer.
+
+### Default modules
+- rasterio
+- shapely
+- numpy
+
+### Create full package
+
+### Use Lambda Layer
 
 ### Docker environment variables
 A couple environment variables are set when creating the images:
@@ -181,12 +190,6 @@ A couple environment variables are set when creating the images:
 - **GEOS_CONFIG**: `$PREFIX/bin/geos-config`
 - **GDAL_VERSION**: version of GDAL
 - **PATH** has been updated to add `$PREFIX/bin` in order to access gdal binaries
-
-## Create a Lambda package
-`TODO`
-
-## Create a Lambda layer
-`TODO`
 
 ## Package architecture and AWS Lambda config
 :warning: AWS Lambda will need `GDAL_DATA` to be set to `/var/task/share/gdal` to be able to work :warning:
