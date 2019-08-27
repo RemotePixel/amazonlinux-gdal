@@ -1,6 +1,7 @@
 version: 2
 common: &common
-  machine: true
+  machine:
+    docker_layer_caching: true 
   working_directory: ~/amazonlinux-gdal
   steps:
     - checkout
@@ -59,10 +60,9 @@ common: &common
 jobs:
   "gdal-3.0":
     <<: *common
-    docker:
-        environment:
-          - GDAL_VERSION=3.0
-          - PYTHON_VERSION="3.6 3.7"
+    environment:
+      - GDAL_VERSION=3.0
+      - PYTHON_VERSION="3.6 3.7"
 
   # "gdal-2.2":
   #   <<: *common
