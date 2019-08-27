@@ -15,7 +15,7 @@ common: &common
     - run:
         name: create layers 
         command: |
-          for PYTHON_VERSION in $PYTHON_VERSIONS; do
+          for PYTHON_VERSION in ${PYTHON_VERSIONS}; do
             echo "Building image with python ${PYTHON_VERSION}"
             docker build \
               --build-arg PYTHON_VERSION=${PYTHON_VERSION}\
