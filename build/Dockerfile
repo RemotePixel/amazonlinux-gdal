@@ -1,7 +1,7 @@
 ARG GDAL_VERSION
 ARG PYTHON_VERSION
 
-FROM remotepixel/amazonlinux:gdal${GDAL_VERSION} AS build
+FROM remotepixel/amazonlinux:gdal${GDAL_VERSION}
 FROM lambci/lambda:build-python${PYTHON_VERSION}
 
 LABEL maintainer="RemotePixel <contact@remotepixel.ca>"
@@ -18,10 +18,10 @@ RUN \
 
 ENV PREFIX /opt
 
-COPY --from=build /opt/lib/ $PREFIX/lib/ 
-COPY --from=build /opt/include/ $PREFIX/include/
-COPY --from=build /opt/share/ $PREFIX/share/
-COPY --from=build /opt/bin/ $PREFIX/bin/ 
+COPY --from=0 /opt/lib/ $PREFIX/lib/ 
+COPY --from=0 /opt/include/ $PREFIX/include/
+COPY --from=0 /opt/share/ $PREFIX/share/
+COPY --from=0 /opt/bin/ $PREFIX/bin/ 
 
 ENV \
   GDAL_DATA=$PREFIX/share/gdal \
@@ -30,5 +30,5 @@ ENV \
   GEOS_CONFIG=$PREFIX/bin/geos-config \
   PATH=$PREFIX/bin:$PATH
 
-RUN pip install rasterio shapely numpy fiona --no-binary :all: -t $PREFIX/python
+RUN pip install rasterio shapely numpy --no-binary :all: -t $PREFIX/python
 ENV PYTHONPATH=$PYTHONPATH:$PREFIX/python
