@@ -47,7 +47,7 @@ common: &common
             driver=$(docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta["driver"])')
             docker stop lambda
             docker rm lambda
-            if [[ $driver != "GTiff" ]] exit 1
+            if [[ $driver != "GTiff" ]]; then exit 1; fi
           done
     - persist_to_workspace:
         root: .
@@ -64,16 +64,28 @@ jobs:
       - GDAL_VERSION=3.0
       - PYTHON_VERSION="3.6 3.7"
 
-  # "gdal-2.2":
+  # "gdal-2.4":
   #   <<: *common
-  #   docker:
-  #       environment:
-  #         - GDAL_VERSION=2.2
-  #         - PYTHON_VERSION="3.6 3.7"
+  #   environment:
+  #     - GDAL_VERSION=2.4
+  #     - PYTHON_VERSION="3.6 3.7"
 
 workflows:
   version: 2
   build_and_push:
     jobs:
       - "gdal-3.0"
-      # - "gdal-2.2"
+        filters:  # required since `deploy` has tag filters AND requires `build`
+          tags:
+            only: /.*/
+      # - "gdal-2.4"
+      #   filters:  # required since `deploy` has tag filters AND requires `build`
+      #     tags:
+      #       only: /.*/      
+      # - deploy:
+      #   requires:
+      #     - "gdal-3.0"
+      #     # - "gdal-2.4"
+      #   filters:
+      #     branches:
+      #       only: master

@@ -26,8 +26,6 @@ RUN mkdir /tmp/pkg-config \
    && make -j $(nproc) --silent && make install && make clean \
    && rm -rf /tmp/pkg-config
 
-ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
-
 # png
 RUN mkdir /tmp/png \
   && curl -sfL http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.gz | tar zxf - -C /tmp/png --strip-components=1 \
@@ -53,13 +51,13 @@ RUN mkdir /tmp/jpeg \
   && make -j $(nproc) install && make clean \
   && rm -rf /tmp/jpeg
 
-# # webp
-# RUN mkdir /tmp/webp \
-#     && curl -sfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz | tar zxf - -C /tmp/webp --strip-components=1 \
-#     && cd /tmp/webp \
-#     && CFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
-#     && make -j $(nproc) --silent && make install && make clean \
-#     && rm -rf /tmp/webp
+# webp
+RUN mkdir /tmp/webp \
+    && curl -sfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${WEBP_VERSION}.tar.gz | tar zxf - -C /tmp/webp --strip-components=1 \
+    && cd /tmp/webp \
+    && CFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
+    && make -j $(nproc) --silent && make install && make clean \
+    && rm -rf /tmp/webp
 
 # zstd
 RUN mkdir /tmp/zstd \
@@ -79,7 +77,7 @@ RUN mkdir /tmp/proj \
    && curl -sfL http://download.osgeo.org/proj/proj-$PROJ_VERSION.tar.gz | tar zxf - -C /tmp/proj --strip-components=1 \
    && cd /tmp/proj \
    && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
-   && make -j $(nproc) && make install && make clean \
+   && make -j $(nproc) --silent && make install && make clean \
    && rm -rf /tmp/proj
 
 # geos
@@ -89,6 +87,8 @@ RUN mkdir /tmp/geos \
   && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/geos
+
+ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
 # gdal
 RUN mkdir /tmp/gdal \
@@ -103,7 +103,7 @@ RUN cd /tmp/gdal \
       --with-openjpeg \
       --with-png \
       --with-jpeg=$PREFIX \
-      # --with-webp=$PREFIX \
+      --with-webp=$PREFIX \
       --with-zstd=$PREFIX \
       --with-crypto \
       --with-libtiff=internal \
