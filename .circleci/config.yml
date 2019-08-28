@@ -79,7 +79,7 @@ jobs:
     <<: *common
     environment:
       - GDAL_VERSION=3.0
-      - PYTHON_VERSIONS=3.6 \n3.7
+      - PYTHON_VERSIONS=3.6 3.7
 
   # "gdal-2.4":
   #   <<: *common
