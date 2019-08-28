@@ -39,8 +39,12 @@ else
 
     echo "Create archives"
     cd $PREFIX && zip -r9q /tmp/${PACKAGE_NAME}.zip python
-    cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip lib/*.so* share 
-    if [[ -n "$WITH_BINARIES" ]] cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip bin
+    if [[ -n "$WITH_BINARIES" ]];
+    then 
+        cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip lib/*.so* share bin
+    else
+        cd $PREFIX && zip -r9q --symlinks /tmp/${PACKAGE_NAME}.zip lib/*.so* share
+    fi
 fi
 
 cp /tmp/${PACKAGE_NAME}.zip /local/${PACKAGE_NAME}.zip
