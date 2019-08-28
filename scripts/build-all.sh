@@ -32,6 +32,6 @@ for GDAL_VERSION in $GDAL_VERSIONS; do
   for PYTHON_VERSION in $PYTHON_VERSIONS; do
     build-layer "build"
     build-layer "rasterio"
-    build-layer "full"
+    WITH_BINARIES=1 build-layer "full"
   done
 done

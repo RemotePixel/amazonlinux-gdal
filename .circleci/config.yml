@@ -61,7 +61,7 @@ common: &common
           for PYTHON_VERSION in ${PYTHON_VERSIONS}; do
             build-layer "build"
             build-layer "rasterio"
-            build-layer "full"
+            WITH_BINARIES=1 build-layer "full"
             test-layer
           done
     - persist_to_workspace:
