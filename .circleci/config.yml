@@ -11,7 +11,7 @@ common: &common
         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
     - run:
         name: create amazonlinux:gdal image
-        command: docker build -f gdal${GDAL_VERSION}/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION} .
+        command: docker build -f base/gdal${GDAL_VERSION}/Dockerfile -t remotepixel/amazonlinux:gdal${GDAL_VERSION} .
     - run:
         name: create layers 
         command: |
