@@ -30,5 +30,4 @@ ENV \
   GEOS_CONFIG=$PREFIX/bin/geos-config \
   PATH=$PREFIX/bin:$PATH
 
-RUN pip install rasterio fiona shapely numpy "gdal~=${GDAL_VERSION}" --no-binary :all: -t $PREFIX/python
-ENV PYTHONPATH=$PYTHONPATH:$PREFIX/python
+RUN mkdir ${PREFIX}/python

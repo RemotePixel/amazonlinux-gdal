@@ -15,24 +15,32 @@ common: &common
     - run:
         name: create layers 
         command: |
-          for PYTHON_VERSION in ${PYTHON_VERSIONS}; do
-            echo "Building image with python ${PYTHON_VERSION}"
-            docker build \
-              --build-arg PYTHON_VERSION=${PYTHON_VERSION}\
-              --build-arg GDAL_VERSION=${GDAL_VERSION} \
-              -f build/Dockerfile \
-              -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION} .
-            
-            echo "Creating aws lambda layer for python ${PYTHON_VERSION}"
-            docker run --name lambda --volume $(pwd)/:/local \
-              --env GDAL_VERSION=${GDAL_VERSION} --env PYTHON_VERSION=${PYTHON_VERSION} \
-              -itd remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION} bash
-            docker cp ./scripts/create-lambda-layer.sh lambda:/tmp/create-lambda-layer.sh
-            docker exec -it lambda bash -c '/tmp/create-lambda-layer.sh ${GDAL_VERSION} ${PYTHON_VERSION}'
-            docker stop lambda
-            docker rm lambda
+          build-layer () {
+              LAYER_NAME=$1
+              echo "Building image with python ${PYTHON_VERSION}"
+              docker build \
+                --build-arg PYTHON_VERSION=${PYTHON_VERSION}\
+                --build-arg GDAL_VERSION=${GDAL_VERSION} \
+                -f layers/${LAYER_NAME}/Dockerfile \
+                -t remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION}-${LAYER_NAME} .
+              
+              echo "Creating aws lambda layer for python ${PYTHON_VERSION}"
+              docker run \
+                --name lambda \
+                --volume $(pwd)/:/local \
+                --env GDAL_VERSION=${GDAL_VERSION} \
+                --env PYTHON_VERSION=${PYTHON_VERSION} \
+                --env LAYER_NAME=${LAYER_NAME} \
+                -itd remotepixel/amazonlinux:gdal${GDAL_VERSION}-py${PYTHON_VERSION}-${LAYER_NAME} bash
+              docker cp ./scripts/create-lambda-layer.sh lambda:/tmp/create-layer.sh
+              docker exec -it lambda bash -c '/tmp/create-layer.sh ${GDAL_VERSION} ${PYTHON_VERSION} ${LAYER_NAME}'
+              docker stop lambda
+              docker rm lambda
+          }
 
+          test-layer () {
             echo "Test layer for python ${PYTHON_VERSION}"
+            LAYER_NAME=rasterio
             docker run \
                 --name lambda \
                 --volume $(pwd)/:/local \
@@ -42,20 +50,29 @@ common: &common
                 --env PYTHON_VERSION=${PYTHON_VERSION} \
                 --env PYTHONPATH=/opt/python:/var/runtime \
                 -itd lambci/lambda:build-python${PYTHON_VERSION} bash
-            docker cp ./layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip lambda:/tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip
-            docker exec -it lambda bash -c 'unzip -q /tmp/layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}.zip -d /opt/'
+            docker cp ./layer-gdal${GDAL_VERSION}-py${PYTHON_VERSION}-${LAYER_NAME}.zip lambda:/tmp/layer.zip
+            docker exec -it lambda bash -c 'unzip -q /tmp/layer.zip -d /opt/'
             driver=$(docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta["driver"])')
             docker stop lambda
             docker rm lambda
             if [[ $driver != "GTiff" ]]; then exit 1; fi
+          }
+
+          for PYTHON_VERSION in ${PYTHON_VERSIONS}; do
+            build-layer "build"
+            build-layer "rasterio"
+            build-layer "full"
+            test-layer
           done
     - persist_to_workspace:
         root: .
         paths:
-          - layer-gdal${GDAL_VERSION}-py3.6-light.zip
-          - layer-gdal${GDAL_VERSION}-py3.6.zip
-          - layer-gdal${GDAL_VERSION}-py3.7-light.zip
-          - layer-gdal${GDAL_VERSION}-py3.7.zip
+          - layer-gdal${GDAL_VERSION}-py3.6-build.zip
+          - layer-gdal${GDAL_VERSION}-py3.6-rasterio.zip
+          - layer-gdal${GDAL_VERSION}-py3.6-full.zip
+          - layer-gdal${GDAL_VERSION}-py3.7-build.zip
+          - layer-gdal${GDAL_VERSION}-py3.7-rasterio.zip
+          - layer-gdal${GDAL_VERSION}-py3.7-full.zip
 
 jobs:
   "gdal-3.0":
