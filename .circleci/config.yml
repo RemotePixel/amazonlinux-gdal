@@ -55,7 +55,7 @@ common: &common
             driver=$(docker exec -it lambda python -c 'import rasterio; src = rasterio.open("https://oin-hotosm.s3.amazonaws.com/5ac626e091b5310010e0d482/0/5ac626e091b5310010e0d483.tif"); print(src.meta["driver"])')
             docker stop lambda
             docker rm lambda
-            if [ "$driver" =~ "GTiff" ]; then echo "OK"; else exit 1; fi 
+            if [[ "$driver" =~ "GTiff" ]]; then echo "OK"; else exit 1; fi 
           }
 
           for PYTHON_VERSION in ${PYTHON_VERSIONS}; do
