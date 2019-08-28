@@ -9,7 +9,7 @@ RUN pip install \
     fiona \
     shapely \
     numpy \
-    "gdal~=${GDAL_VERSION}" \
+    GDAL~=${GDAL_VERSION} \
     --no-binary :all: -t $PREFIX/python
 
 ENV PYTHONPATH=$PYTHONPATH:$PREFIX/python
