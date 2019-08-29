@@ -67,12 +67,7 @@ common: &common
     - persist_to_workspace:
         root: .
         paths:
-          - layer-gdal${GDAL_VERSION}-py3.6-build.zip
-          - layer-gdal${GDAL_VERSION}-py3.6-rasterio.zip
-          - layer-gdal${GDAL_VERSION}-py3.6-full.zip
-          - layer-gdal${GDAL_VERSION}-py3.7-build.zip
-          - layer-gdal${GDAL_VERSION}-py3.7-rasterio.zip
-          - layer-gdal${GDAL_VERSION}-py3.7-full.zip
+          - layer-*.zip
 
 jobs:
   "gdal-3.0":
